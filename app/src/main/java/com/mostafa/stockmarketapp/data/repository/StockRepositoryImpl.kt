@@ -2,6 +2,7 @@ package com.mostafa.stockmarketapp.data.repository
 
 import com.mostafa.stockmarketapp.data.csv.CSVParser
 import com.mostafa.stockmarketapp.data.local.StockDatabase
+import com.mostafa.stockmarketapp.data.mapper.toComapnyInfo
 import com.mostafa.stockmarketapp.data.mapper.toCompanyListing
 import com.mostafa.stockmarketapp.data.mapper.toCompanyListingEntity
 import com.mostafa.stockmarketapp.data.remote.StockApi
@@ -22,7 +23,7 @@ class StockRepositoryImpl @Inject constructor(
     private val api: StockApi,
     private val db: StockDatabase,
     private val companyListingsParser: CSVParser<CompanyListing>,
-    private val IntradayInfoParser : CSVParser<IntraDayInfo>
+    private val intradayInfoParser: CSVParser<IntraDayInfo>
 ) : StockRepository {
 
     private val dao = db.dao
@@ -69,6 +70,42 @@ class StockRepositoryImpl @Inject constructor(
                 ))
                 emit(Resource.Loading(false))
             }
+        }
+    }
+
+    override suspend fun getIntradayInfo(symbol: String): Resource<List<IntraDayInfo>> {
+        return try {
+            val response = api.getIntradayInfo(symbol)
+            val result = intradayInfoParser.parse(response.byteStream())
+            Resource.Success(result)
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Resource.Error(
+                message = "Couldn't Load Intraday Info"
+            )
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            Resource.Error(
+                message = "Couldn't Load Intraday Info"
+            )
+        }
+    }
+
+    override suspend fun getCompanyInfo(symbol: String): Resource<CompanyInfo> {
+        return try {
+            val result = api.getCompanyInfo(symbol)
+            Resource.Success(result.toComapnyInfo())
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Resource.Error(
+                message = "Couldn't Load Intraday Info"
+            )
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            Resource.Error(
+                message = "Couldn't Load Intraday Info"
+            )
         }
     }
 

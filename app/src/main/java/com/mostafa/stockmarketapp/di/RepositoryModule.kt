@@ -2,8 +2,10 @@ package com.mostafa.stockmarketapp.di
 
 import com.mostafa.stockmarketapp.data.csv.CSVParser
 import com.mostafa.stockmarketapp.data.csv.CompanyListingsParser
+import com.mostafa.stockmarketapp.data.csv.IntradayInfoParser
 import com.mostafa.stockmarketapp.data.repository.StockRepositoryImpl
 import com.mostafa.stockmarketapp.domain.model.CompanyListing
+import com.mostafa.stockmarketapp.domain.model.IntraDayInfo
 import com.mostafa.stockmarketapp.domain.repository.StockRepository
 import dagger.Binds
 import dagger.Module
@@ -20,6 +22,12 @@ abstract class RepositoryModule {
     abstract fun bindCompanyListingsParser(
         companyListingsParser: CompanyListingsParser
     ): CSVParser<CompanyListing>
+
+    @Binds
+    @Singleton
+    abstract fun bindIntradayInfoParser(
+        intradayInfoParser: IntradayInfoParser
+    ): CSVParser<IntraDayInfo>
 
     @Binds
     @Singleton

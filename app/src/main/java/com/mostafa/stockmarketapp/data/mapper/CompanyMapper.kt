@@ -21,7 +21,7 @@ fun CompanyListing.toCompanyListingEntity(): CompanyListingEntity {
     )
 }
 
-fun CompanyInfoDto.toComapnyIndo(): CompanyInfo {
+fun CompanyInfoDto.toComapnyInfo(): CompanyInfo {
     return CompanyInfo(
         symbol = symbol ?: "",
         description = description ?: "",
