@@ -1,5 +1,6 @@
 package com.mostafa.stockmarketapp.data.remote
 
+import com.mostafa.stockmarketapp.data.remote.dto.CompanyInfoDto
 import okhttp3.ResponseBody
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -21,7 +22,7 @@ interface StockApi {
     suspend fun getCompanyInfo(
         @Query("symbol") symbol: String,
         @Query("apikey") apiKey: String = API_KEY
-    )
+    ):CompanyInfoDto
 
 
     companion object {
