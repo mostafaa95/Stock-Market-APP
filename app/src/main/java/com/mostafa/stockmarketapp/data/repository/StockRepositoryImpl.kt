@@ -5,7 +5,9 @@ import com.mostafa.stockmarketapp.data.local.StockDatabase
 import com.mostafa.stockmarketapp.data.mapper.toCompanyListing
 import com.mostafa.stockmarketapp.data.mapper.toCompanyListingEntity
 import com.mostafa.stockmarketapp.data.remote.StockApi
+import com.mostafa.stockmarketapp.domain.model.CompanyInfo
 import com.mostafa.stockmarketapp.domain.model.CompanyListing
+import com.mostafa.stockmarketapp.domain.model.IntraDayInfo
 import com.mostafa.stockmarketapp.domain.repository.StockRepository
 import com.mostafa.stockmarketapp.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -19,8 +21,9 @@ import javax.inject.Singleton
 class StockRepositoryImpl @Inject constructor(
     private val api: StockApi,
     private val db: StockDatabase,
-    private val companyListingsParser: CSVParser<CompanyListing>
-): StockRepository {
+    private val companyListingsParser: CSVParser<CompanyListing>,
+    private val IntradayInfoParser : CSVParser<IntraDayInfo>
+) : StockRepository {
 
     private val dao = db.dao
 
@@ -37,14 +40,14 @@ class StockRepositoryImpl @Inject constructor(
 
             val isDbEmpty = localListings.isEmpty() && query.isBlank()
             val shouldJustLoadFromCache = !isDbEmpty && !fetchFromRemote
-            if(shouldJustLoadFromCache) {
+            if (shouldJustLoadFromCache) {
                 emit(Resource.Loading(false))
                 return@flow
             }
             val remoteListings = try {
                 val response = api.getListings()
                 companyListingsParser.parse(response.byteStream())
-            } catch(e: IOException) {
+            } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Resource.Error("Couldn't load data"))
                 null
@@ -68,4 +71,6 @@ class StockRepositoryImpl @Inject constructor(
             }
         }
     }
+
+
 }
